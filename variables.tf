@@ -67,13 +67,14 @@ variable "addons" {
   default = [
     "coredns",
     "vpc-cni",
-    "kube-proxy"
+    "kube-proxy",
+    "aws-ebs-csi-driver"
   ]
 }
 
 variable "instance_types" {
   default = [
-    "t2.micro"
+    "t3a.medium"
   ]
 }
 

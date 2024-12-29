@@ -55,6 +55,40 @@ resource "aws_iam_role" "eks_node_role" {
   tags = var.tags
 }
 
+resource "aws_iam_policy" "eks_ebs_csi_policy" {
+  name        = "tova_eks_ebs_csi_policy"
+  description = "EBS CSI Driver policy for EKS"
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "ec2:CreateSnapshot",
+          "ec2:CreateVolume",  # Added action
+          "ec2:AttachVolume",
+          "ec2:DetachVolume",
+          "ec2:DeleteVolume",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeInstances",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeTags",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeVolumesModifications",
+          "ec2:CreateTags"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "eks_ebs_csi_policy_attachment" {
+  name       = "${var.cluster_name}-eks_ebs_csi_policy_attachment"
+  roles      = [aws_iam_role.eks_node_role.name]
+  policy_arn = aws_iam_policy.eks_ebs_csi_policy.arn
+}
+
 resource "aws_iam_policy_attachment" "eks_worker_node_policy" {
   name       = "${var.cluster_name}-eks-worker-node-policy"
   roles      = [aws_iam_role.eks_node_role.name]
