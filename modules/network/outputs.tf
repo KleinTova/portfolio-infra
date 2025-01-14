@@ -12,3 +12,7 @@ output "private_subnets" {
   description = "List of private subnet IDs"
   value       = aws_subnet.private_subnet[*].id
 }
+
+output "eks_sg_id" {
+  value = aws_security_group.eks_cluster_sg.id
+}

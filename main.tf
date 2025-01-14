@@ -28,10 +28,16 @@ module "eks" {
   scaling_desired_size = var.scaling_desired_size
   scaling_max_size     = var.scaling_max_size
   scaling_min_size     = var.scaling_min_size
-  cluster_addons               = var.addons
-  instance_types = var.instance_types
-  capacity_type  = var.capacity_type
-  ami_type       = var.ami_type
-  disk_size      = var.disk_size
+  cluster_addons       = var.addons
+  instance_types       = var.instance_types
+  capacity_type        = var.capacity_type
+  ami_type             = var.ami_type
+  disk_size            = var.disk_size
   tags                 = var.tags
+  eks_sg_id            = module.network.eks_sg_id
+}
+
+module "argocd" {
+    source = "./modules/argocd"
+    depends_on = [ module.network, module.eks ]
 }

@@ -57,3 +57,7 @@ variable "ami_type" {
 
 variable "disk_size" {
 }
+
+variable "eks_sg_id" {
+  
+}
