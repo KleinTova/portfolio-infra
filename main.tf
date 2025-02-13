@@ -6,18 +6,18 @@ module "network" {
   private_subnet_cidrs = var.private_subnet_cidrs
   availability_zones   = var.availability_zones
   aws_region           = var.aws_region
-  tags = var.tags
-  cluster_name = var.cluster_name
+  tags                 = var.tags
+  cluster_name         = var.cluster_name
 }
 
 module "iam" {
-  source      = "./modules/IAM"
+  source       = "./modules/IAM"
   cluster_name = var.cluster_name
-  tags = var.tags
+  tags         = var.tags
 }
 
 module "eks" {
-  depends_on = [ module.network , module.iam ]
+  depends_on           = [ module.network , module.iam ]
   source               = "./modules/eks"
   cluster_name         = var.cluster_name
   vpc_id               = module.network.vpc_id
@@ -38,6 +38,8 @@ module "eks" {
 }
 
 module "argocd" {
-    source = "./modules/argocd"
-    depends_on = [ module.network, module.eks ]
+  source                = "./modules/argocd"
+  depends_on            = [ module.network, module.eks ]
+  values_file_path      = var.argo_values_file_path
+  ssh_private_path      = var.ssh_private_path
 }
