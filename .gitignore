@@ -3,4 +3,4 @@
 *ssh*
 *tfvars
 *tmp*
-*terragrunt*
+*.terragrunt*
