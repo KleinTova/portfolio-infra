@@ -1,3 +1,10 @@
+resource "local_file" "argocd_values" {
+  content  = templatefile("${path.module}/argocd-values.yaml.tpl", {
+    ENV_GITOPS = var.environment
+  })
+  filename = "${path.module}/generated-argocd-values.yaml"
+}
+
 resource "helm_release" "argocd" {
   name = "argocd"
 
@@ -8,7 +15,7 @@ resource "helm_release" "argocd" {
   version          = "7.1.1"
   depends_on = [ kubernetes_secret.gitops_repo_ssh ]
   values = [
-    "${file("${path.module}/${var.values_file_path}")}"
+    "${file(local_file.argocd_values.filename)}"
   ]
 }
 
@@ -32,7 +39,7 @@ resource "kubernetes_secret" "gitops_repo_ssh" {
   data = {
     "sshPrivateKey" = file("${path.module}/${var.ssh_private_path}")
     "type"          = "git"
-    "url"           = "git@github.com:KleinTova/portfolio-gitops-config.git"
+    "url"           = var.repository_url
     "name"          = "github"
     "project"       = "*"
   }

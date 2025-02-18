@@ -1,10 +1,17 @@
+locals {
+  cleaned_string = replace(replace(replace(var.private_subnets, "\\[", ""), "\\]", ""), "\"", "")
+  private_subnets    = split(",", local.cleaned_string)
+  instance_type = replace(replace(replace(replace(var.instance_types,"[\\",""),"\\\"]",""),"[",""),"]","")
+}
+
+
 resource "aws_eks_cluster" "eks_cluster" {
   name          = var.cluster_name
   role_arn      = var.eks_cluster_role_arn
   vpc_config {
     subnet_ids = [
-      var.private_subnets[0],
-      var.private_subnets[1]
+      replace(local.private_subnets[0],"[",""),
+      replace(local.private_subnets[1],"]","")
       ]
     endpoint_private_access = true
     endpoint_public_access = true
@@ -22,10 +29,10 @@ resource "aws_eks_node_group" "eks_node_group" {
   node_group_name = "${var.cluster_name}-node-group"
   node_role_arn   = var.eks_node_role_arn
   subnet_ids      = [
-    var.private_subnets[0],
-    var.private_subnets[1]
+    replace(local.private_subnets[0],"[",""),
+    replace(local.private_subnets[1],"]","")
   ]
-  instance_types = var.instance_types
+  instance_types = [var.instance_types]
   capacity_type  = var.capacity_type
   ami_type       = var.ami_type
   disk_size      = var.disk_size
@@ -45,6 +52,7 @@ resource "aws_eks_node_group" "eks_node_group" {
 }
 
 resource "aws_eks_addon" "addons" {
+  depends_on = [ aws_eks_node_group.eks_node_group ]
   for_each     = var.cluster_addons
   addon_name   = each.value
   cluster_name = aws_eks_cluster.eks_cluster.name
@@ -65,5 +73,3 @@ resource "aws_eks_access_policy_association" "console" {
     type = "cluster"
   }
 }
-
-

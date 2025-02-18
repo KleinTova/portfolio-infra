@@ -1,3 +1,7 @@
+generate "provider" {
+  path = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<-EOF
 terraform {
   required_providers {
     aws = {
@@ -21,12 +25,6 @@ terraform {
     }
 
   }
-  backend "s3" {
-    bucket = "tova-portfolio-terraform-bucket"
-    key    = "terraform.tfstate"
-    region = "us-east-1"
-  }
-
   required_version = ">= 1.5.0"
 }
 
@@ -37,24 +35,27 @@ provider "aws" {
 
 provider "helm" {
   kubernetes {
-    host                   = module.eks.eks_cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks.eks_cluster_certificate_authority)
+    host                   = var.eks_cluster_endpoint
+    cluster_ca_certificate = base64decode(var.eks_cluster_ca)
 
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.eks_cluster_name]
+      args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name]
     }
   }
 }
 
 provider "kubernetes" {
-  host                   = module.eks.eks_cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.eks_cluster_certificate_authority)
+  host                   = var.eks_cluster_endpoint
+  cluster_ca_certificate = base64decode(var.eks_cluster_ca)
 
   exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.eks_cluster_name]
+      args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name]
     }
+}
+
+EOF
 }
