@@ -1,7 +1,3 @@
-dependency "eks" {
-  config_path = "../eks" 
-}
-
 locals {
   global = read_terragrunt_config(find_in_parent_folders("global.hcl")).locals
   common = read_terragrunt_config(find_in_parent_folders("common.hcl")).locals
@@ -23,7 +19,9 @@ dependency "network" {
   config_path = "../network" 
 }
 
-
+dependency "eks" {
+  config_path = "../eks" 
+}
 
 inputs = merge(
   local.global,
