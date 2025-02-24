@@ -1,4 +1,4 @@
-output "eks_cluster_role_arn" {
-  description = "The ARN of the EKS Cluster Role"
+output "helm_release_name" {
+  description = "The argocd helm release name"
   value       = helm_release.argocd.name
 }

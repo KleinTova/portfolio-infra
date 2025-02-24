@@ -6,6 +6,9 @@ resource "helm_release" "argocd" {
   create_namespace = true
   version          = "7.1.1"
   depends_on = [ kubernetes_secret.gitops_repo_ssh ]
+  values = [
+    file("argocd-values.yaml")
+  ]
 }
 
 resource "kubernetes_namespace" "argocd_namespace" {
@@ -33,3 +36,36 @@ resource "kubernetes_secret" "gitops_repo_ssh" {
     "project"       = "*"
   }
 }
+
+# resource "kubernetes_manifest" "app-of-apps" {
+#   depends_on = [ helm_release.argocd ]
+#   manifest = {
+#     "apiVersion" = "argoproj.io/v1alpha1"
+#     "kind" = "Application"
+#     "metadata" = {
+#       "name" = "app-of-apps"
+#       "namespace" = "argocd"
+#       "finalizers" = [
+#         "resources-finalizer.argocd.argoproj.io"
+#       ]
+#     }
+#     "spec" ={
+#       "project" = "default"
+#       "source" = {
+#         "repoURL" = "https://github.com/KleinTova/portfolio-gitops-config.git"
+#         "targetRevision" = "main"
+#         "path" = "apps/${var.environment}"
+#       }
+#       "destination" = {
+#         "server" = "https://kubernetes.default.svc"
+#         "namespace" = "default"
+#       }
+#       "syncPolicy" = {
+#         "automated" = {
+#           "prune" = "true"
+#           "selfHeal" = "true"
+#         }
+#       }
+#     }
+#   }
+# }
