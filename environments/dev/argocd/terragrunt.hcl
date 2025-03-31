@@ -33,5 +33,7 @@ inputs = merge(
     eks_cluster_endpoint  = dependency.eks.outputs.eks_cluster_endpoint
     eks_cluster_ca        = dependency.eks.outputs.eks_cluster_certificate_authority
     eks_cluster_name      = dependency.eks.outputs.eks_cluster_name
+    eks_oidc_issuer_url   = dependency.eks.outputs.eks_oidc_issuer_url
+    eks_oidc_provider_arn = dependency.eks.outputs.eks_oidc_provider_arn
   }
 )

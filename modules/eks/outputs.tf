@@ -20,3 +20,13 @@ output "eks_cluster_endpoint" {
 output "eks_cluster_certificate_authority" {
   value = aws_eks_cluster.eks_cluster.certificate_authority[0].data
 }
+
+output "eks_oidc_issuer_url" {
+  description = "OIDC issuer URL for the EKS cluster"
+  value       = aws_eks_cluster.eks_cluster.identity[0].oidc[0].issuer
+}
+
+output "eks_oidc_provider_arn" {
+  description = "OIDC provider ARN for the EKS cluster"
+  value       = aws_iam_openid_connect_provider.eks_oidc.arn
+}

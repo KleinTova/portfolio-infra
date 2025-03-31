@@ -42,7 +42,7 @@ inputs = merge(
         "kube-proxy",
         "aws-ebs-csi-driver"
       ]
-    instance_types       = "t3a.large"
+    instance_types       = "t3a.xlarge"
     capacity_type        = "ON_DEMAND"
     ami_type             = "AL2_x86_64"
     disk_size            = "50"

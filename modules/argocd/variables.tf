@@ -23,6 +23,10 @@ variable "eks_cluster_name" {
 }
 
 
+variable "eks_oidc_issuer_url" {}
+
+variable "eks_oidc_provider_arn" {}
+
 variable "environment" {
   type        = string
   description = "The environment name"
